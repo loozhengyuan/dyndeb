@@ -1,0 +1,19 @@
+# Go
+# Build your Go project.
+# Add steps that test, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/go
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- group: docker-hub
+
+steps:
+- script: |
+    docker build --tag $(dockerId)/$(Build.Repository.Name):$(Build.SourceVersion) .
+    docker login -u $(dockerId) -p $(dockerPassword)
+    docker push $(dockerId)/$(Build.Repository.Name):$(Build.SourceVersion)
