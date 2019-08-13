@@ -14,6 +14,18 @@ variables:
 
 steps:
 - script: |
-    docker build --tag $(dockerId)/$(Build.Repository.Name):$(Build.SourceVersion) .
-    docker login -u $(dockerId) -p $(dockerPassword)
-    docker push $(dockerId)/$(Build.Repository.Name):$(Build.SourceVersion)
+    docker build --tag $(Build.Repository.Name):$(Build.SourceVersion) .
+  displayName: 'Build Docker image'
+
+- script: |
+    echo "$(dockerPassword)" | docker login --username "$(dockerId)" --password-stdin
+  displayName: 'Authenticate with Docker Hub'
+
+- script: |
+    docker tag $(Build.Repository.Name):$(Build.SourceVersion) $(Build.Repository.Name):latest
+  displayName: 'Tag image with :latest'
+
+- script: |
+    docker push $(Build.Repository.Name):$(Build.SourceVersion)
+    docker push $(Build.Repository.Name):latest
+  displayName: 'Push Docker image to Docker Hub'
