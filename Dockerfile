@@ -8,6 +8,9 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Verify downloaded modules with go.sum
+RUN go mod verify
+
 # Build minary
 COPY main.go preseed.cfg ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o dyndeb .
